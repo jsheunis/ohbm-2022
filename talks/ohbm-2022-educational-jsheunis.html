@@ -67,65 +67,54 @@
   </section>
   </section>
 
-<!-- AGENDA -->
-<section>
-    <h2>Agenda</h2>
-    <ol>
-        <li>What is DataLad - an illustrated story</li>
-        <li>Accessing data:<br><code>datalad [clone/get]</code></li>
-        <li>Generating and reproducing results:<br><code>datalad [run/rerun/containers-run]</code></li>
-        <li>Publishing data:<br><code>datalad [siblings/push]</code></li>
-    </ol>
-</section>
-
 <!-- WHAT IS DATALAD -->
 <section>
-  <h3>1. What is DataLad - an illustrated story</h3>
+  <h3>1. What is DataLad?</h3>
   <img src="../pics/comic_box1.svg" alt="">
 </section>
 
 <section>
-  <h3>1. What is DataLad - an illustrated story</h3>
+  <h3>1. What is DataLad?</h3>
   <img src="../pics/comic_box2.svg" alt="">
 </section>
 
 <section>
-  <h3>1. What is DataLad - an illustrated story</h3>
+  <h3>1. What is DataLad?</h3>
   <img src="../pics/comic_box3.svg" alt="">
 </section>
 
 <section>
-  <h3>1. What is DataLad - an illustrated story</h3>
+  <h3>1. What is DataLad?</h3>
   <img src="../pics/comic_box4.svg" alt="">
 </section>
 
 <section>
-  <h3>1. What is DataLad - an illustrated story</h3>
+  <h3>1. What is DataLad?</h3>
   <img src="../pics/comic_box5.svg" alt="">
 </section>
 
 <section>
-  <h3>1. What is DataLad - an illustrated story</h3>
+  <h3>1. What is DataLad?</h3>
   <img src="../pics/comic_box6.svg" alt="">
 </section>
 
 <section>
-  <h3>1. What is DataLad - an illustrated story</h3>
+  <h3>1. What is DataLad?</h3>
   <img src="../pics/comic_box7.svg" alt="">
 </section>
 
 <section>
-  <h3>1. What is DataLad - an illustrated story</h3>
+  <h3>1. What is DataLad?</h3>
   <img src="../pics/comic_box8.svg" alt="">
 </section>
 
 <section>
-  <h3>1. What is DataLad - an illustrated story</h3>
+  <h3>1. What is DataLad?</h3>
   <img src="../pics/comic_box9.svg" alt="">
 </section>
 
 <section>
-  <h3>1. What is DataLad - an illustrated story</h3>
+  <h3>1. What is DataLad?</h3>
   <img src="../pics/comic_box10.svg" alt="">
 </section>
 
@@ -133,21 +122,66 @@
 <!-- ACCESSING DATA -->
 <section>
   <h3>2. Accessing data</h3>
-  <code>datalad [clone/get]</code>
+  <p>
+    Clone dataset from GitHub:<br>
+    <pre><code>datalad clone https://github.com/OpenNeuroDatasets/ds001907.git</code></pre>
+    <br>
+    Get specific subset or file:<br>
+    <pre><code>datalad get ds001907/sub-RC4101/ses-1/anat/sub-RC4101_ses-1_T1w.nii.g</code></pre>
+    <br>
+    Once finished, drop data:<br>
+    <pre><code>datalad drop ds001907/sub-RC4101/ses-1/anat/sub-RC4101_ses-1_T1w.nii.g</code></pre>
+  </p>
 </section>
 
 
 <!-- GENERATING AND REPRODUCING RESULTS -->
 <section>
   <h3>3. Generating and reproducing results</h3>
-  <code>datalad [run/rerun/containers-run]</code>
+  <p>
+    DataLad extension for working with containers, and <a href="https://sylabs.io/guides/3.5/user-guide/quick_start.html">Singularity</a>:
+    <pre><code>pip install datalad_container</code></pre>or
+    <pre><code>conda install -c conda-forge datalad-container</code></pre>
+    
+    <br>
+    Get and run container:<br>
+    <pre><code>datalad clone https://github.com/ReproNim/containers containers</code></pre>
+    <pre><code>datalad containers-run \
+         -n containers/repronim-simple-workflow \
+         --input 'ds001907/sub-RC4*/ses-1/anat/sub-*_ses-1_T1w.nii.gz' \
+         code/simple_workflow/run_demo_workflow.py \
+           -o . -w data/workdir --plugin_args 'dict(n_procs=10)' '{inputs}'</code></pre>
+    <br>
+    Rerun the analysis:
+  <pre><code>datalad rerun "specific-commit-hash-of-previous-run-command"</code></pre>
+  </p>
+
+  
 </section>
 
 
 <!-- PUBLISHING DATA -->
 <section>
   <h3>4. Publishing data</h3>
-  <code>datalad [siblings/push]</code>
+
+  Create a dataset sibling:
+  <pre><code>datalad create-sibling-github github-lfs</code></pre>
+  
+  Create a special remote of type <code>git-lfs</code>:
+  <pre><code>git annex initremote github-lfs type=git-lfs url="https://github.com/[your-github-username]/github-lfs" encryption=none embedcreds=no</code></pre>
+
+  Copy dataset content to LFS:
+  <pre><code>git annex copy --to github-lfs .</code></pre>
+
+  Push DataLad dataset to GitHub:
+  <pre><code>datalad push --to github</code></pre>
+
+  Or: add a publication dependency and push once:
+  <pre><code>
+    datalad siblings github --publish-depends github-lfs
+    datalad push --to github
+  </code></pre>
+
 </section>
 
 
